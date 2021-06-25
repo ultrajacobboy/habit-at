@@ -1,4 +1,4 @@
-from habit import Habit
+from habit import Habit, bcolors
 import time
 import multiprocessing
 
@@ -8,13 +8,15 @@ if cpu_count < 2:
     sys.exit()
 else:
     client = Habit()
+    colors = bcolors()
     while True:
         try:
             client.welcome()
             client.is_it_ended()
             client.user_input()
         except KeyboardInterrupt:
-            print("Type exit or quit!")
+            print(f"To quit the program, type {colors.FAIL}exit{colors.ENDC} or {colors.FAIL}quit!{colors.ENDC}")
+            a = input("Press enter to continue.")
         except Exception as e:
-            print(f"Something went wrong!\n{e}")
-            time.sleep(324)
+            print(f"{colors.FAIL}Something went wrong!{colors.ENDC}\n{e}")
+            a = input("Press enter to continue.")

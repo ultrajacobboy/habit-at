@@ -7,6 +7,7 @@ import os
 import sys
 import keyboard
 import threading
+import random
 
 script = dirname(abspath(__file__))
 
@@ -112,7 +113,8 @@ class Habit:
 
     def add_habit(self):
         add = input("Enter the name of the habit\n> ")
-        if add == "":
+        new_add = add.replace(" ", "")
+        if new_add == "":
             print("Invalid name.")
             return
         else:
@@ -123,7 +125,7 @@ class Habit:
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
                 f.close()
-            print(f"{add} has been added.")
+            print(f"{add} has been {bcolors.OKGREEN}added{bcolors.ENDC}.")
 
     def finish(self):
         self.get_data()
@@ -134,9 +136,10 @@ class Habit:
         finish = input("Which activity have you finished?\n> ")
         if finish in lists:
             if self.data["habits"][finish]["completed"]:
-                print("Already finished for today!")
+                print(f"{bcolors.FAIL}Already finished for today!{bcolors.ENDC}")
                 return
             else:
+                comp = ["Great job!", "Keep it up!", "Amazing!"]
                 self.data["habits"][finish]["completed"] = True
                 self.data["habits"][finish]["streak"] += 1
                 if self.data["habits"][finish]["streak"] > self.data["habits"][finish]["max_streak"]:
@@ -144,6 +147,7 @@ class Habit:
                 with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
+                print(f"{bcolors.OKGREEN}{random.choice(comp)}{bcolors.ENDC}")
         else:
             print("Invalid habit.")
 
@@ -153,13 +157,13 @@ class Habit:
         for key, value in self.data["habits"].items():
             print(key)
             lists.append(key)
-        delete = input("Enter the name of the habit you want to delete\n> ")
+        delete = input(f"Enter the name of the habit you want to {bcolors.FAIL}delete{bcolors.ENDC}\n> ")
         if delete in lists:
             del self.data["habits"][delete]
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
-            print(f"{delete} has been deleted.")
+            print(f"{delete} has been {bcolors.FAIL}deleted{bcolors.ENDC}.")
         else:
             print("Invalid habit.")
 
@@ -180,7 +184,7 @@ class Habit:
         with open(f'{self.script}{self.path}LICENSE', "r") as f:
             print(f.read())
             f.close()
-        print("\nPress to ESC to quit.")
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
         while True:
             if keyboard.is_pressed("esc"):
                 os.system(self.clear)
