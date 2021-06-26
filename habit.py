@@ -8,7 +8,6 @@ import sys
 import keyboard
 import threading
 import random
-from os import system
 
 script = dirname(abspath(__file__))
 
@@ -64,17 +63,21 @@ class Habit:
 
     def welcome(self):
         os.system(self.clear)
-        system("title " + "Habit-at")
+        os.system("title " + "Habit-at")
         date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         self.check_name()
         self.get_data()
-        print(f"Welcome to habit-at.")
-        print()
-        print(f"It is currently {date_time}")
+        print(f"Welcome to {bcolors.OKCYAN}habit-at{bcolors.ENDC}.\n")
+        print(f"It is currently {bcolors.OKCYAN}{date_time}{bcolors.ENDC}")
         hab_num = 0
         for i in self.data["habits"]:
             hab_num += 1
-        print(f"You are currently tracking {hab_num} habits.\n")
+        if hab_num == 0:
+            print(f"You are currently tracking {bcolors.FAIL}{hab_num}{bcolors.ENDC} habits.\n")
+        elif hab_num == 1:
+            print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habit.\n")
+        else:
+            print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habits.\n")
         print("* Github: https://github.com/ultrajacobboy/habit-at")
         checking = threading.Thread(target=self.is_it_end)
         checking.daemon = True
@@ -114,10 +117,13 @@ class Habit:
             pass
 
     def add_habit(self):
+        os.system(self.clear)
         add = input("Enter the name of the habit\n> ")
         new_added = add.replace(" ", "")
         new_add = add.strip()
         if new_added == "":
+            os.system(self.clear)
+            self.welcome()
             print("Invalid name.")
             return
         else:
@@ -127,20 +133,31 @@ class Habit:
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
                 f.close()
+            os.system(self.clear)
+            self.welcome()
             print(f"{new_add} has been {bcolors.OKGREEN}added{bcolors.ENDC}.")
 
     def finish(self):
+        os.system(self.clear)
+        self.sep = "----------------------------------------------"
         self.get_data()
         lists = []
         for key, value in self.data["habits"].items():
-            print(key)
+            if value["completed"]:
+                print(f"{key} {bcolors.OKGREEN}Completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
+            else:
+                print(f"{key} {bcolors.FAIL}NOT completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
             lists.append(key)
         finish = input("Which activity have you finished?\n> ")
         if finish in lists:
             if self.data["habits"][finish]["completed"]:
+                os.system(self.clear)
                 print(f"{bcolors.FAIL}Already finished for today!{bcolors.ENDC}")
                 return
             else:
+                os.system(self.clear)
                 comp = ["Great job!", "Keep it up!", "Amazing!"]
                 self.data["habits"][finish]["completed"] = True
                 self.data["habits"][finish]["streak"] += 1
@@ -149,15 +166,25 @@ class Habit:
                 with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
-                print(f"{bcolors.OKGREEN}{random.choice(comp)}{bcolors.ENDC}")
+                self.welcome()
+                print(f"{bcolors.OKGREEN}{random.choice(comp)} You finished {finish}!{bcolors.ENDC}")
         else:
+            os.system(self.clear)
+            self.welcome()
             print("Invalid habit.")
 
     def del_habit(self):
         self.get_data()
+        self.sep = "----------------------------------------------"
+        os.system(self.clear)
         lists = []
         for key, value in self.data["habits"].items():
-            print(key)
+            if value["completed"]:
+                print(f"{key} {bcolors.OKGREEN}Completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
+            else:
+                print(f"{key} {bcolors.FAIL}NOT completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
             lists.append(key)
         delete = input(f"Enter the name of the habit you want to {bcolors.FAIL}delete{bcolors.ENDC}\n> ")
         if delete in lists:
@@ -165,21 +192,36 @@ class Habit:
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
+            os.system(self.clear)
+            self.welcome()
             print(f"{delete} has been {bcolors.FAIL}deleted{bcolors.ENDC}.")
         else:
-            print("Invalid habit.")
+            os.system(self.clear)
+            self.welcome()
+            print(f"{bcolors.FAIL}Invalid{bcolors.ENDC} habit.")
 
     def list_all(self):
+        os.system(self.clear)
+        self.sep = "----------------------------------------------"
         self.get_data()
         lists = []
         m = 0
         for key, value in self.data["habits"].items():
             if value["completed"]:
                 print(f"{key} {bcolors.OKGREEN}Completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
             else:
                 print(f"{key} {bcolors.FAIL}NOT completed{bcolors.ENDC}, Streak: {value['streak']}, Max Streak: {value['max_streak']}")
+                print(self.sep)
             m += 1
         print(f"You have {m} habits")
+        print(self.sep)
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
+        while True:
+            if keyboard.is_pressed("esc"):
+                os.system(self.clear)
+                self.welcome()
+                break
 
     def license(self):
         os.system(self.clear)
@@ -211,6 +253,7 @@ class Habit:
     def user_input(self):
         while True:
             user = input(f"{self.name}> ")
+            user = user.strip()
             if user == "help" or user == "man" or user == "?" or user == "??" or user == "???":
                 print("Documentation is at https://github.com/ultrajacobboy/habit-at")
             elif user == "add":
@@ -218,11 +261,14 @@ class Habit:
             elif user == "finish":
                 self.finish()
             elif user == "quit" or user == "exit":
+                goodbye = ["Goodbye", "See you soon!", "Have a good day!", "See you later!"]
                 curr = datetime.now().strftime("%m/%d/%Y")
                 self.data["timestamp"] = curr
                 with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
+                os.system(self.clear)
+                print(f"{bcolors.OKGREEN}{random.choice(goodbye)}{bcolors.ENDC}")
                 sys.exit()
             elif user == "":
                 pass
