@@ -8,6 +8,7 @@ import sys
 import keyboard
 import threading
 import random
+from os import system
 
 script = dirname(abspath(__file__))
 
@@ -63,6 +64,7 @@ class Habit:
 
     def welcome(self):
         os.system(self.clear)
+        system("title " + "Habit-at")
         date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         self.check_name()
         self.get_data()
@@ -191,6 +193,21 @@ class Habit:
                 self.welcome()
                 break
 
+    def system(self):
+        os.system(self.clear)
+        print(f"Platform: {platform.system()}")
+        print(f"Release: {platform.release()}")
+        print(f"Version: {platform.version()}")
+        print(f"Architecture: {platform.machine()}")
+        print(f"Processor: {platform.processor()}")
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
+        while True:
+            if keyboard.is_pressed("esc"):
+                os.system(self.clear)
+                self.welcome()
+                break
+        
+
     def user_input(self):
         while True:
             user = input(f"{self.name}> ")
@@ -215,5 +232,7 @@ class Habit:
                 self.del_habit()
             elif user == "list_all" or user == "list all" or user == "list":
                 self.list_all()
+            elif user == "system":
+                self.system()
             else:
                 print("Unknown command.")
