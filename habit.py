@@ -113,19 +113,19 @@ class Habit:
 
     def add_habit(self):
         add = input("Enter the name of the habit\n> ")
-        new_add = add.replace(" ", "")
-        if new_add == "":
+        new_added = add.replace(" ", "")
+        new_add = add.strip()
+        if new_added == "":
             print("Invalid name.")
             return
         else:
             self.get_data()
             new_data = self.data
-            add_dict = {add: {"streak": 0, "completed": False}}
-            new_data["habits"] = dict(self.data["habits"], **{add: {"streak": 0, "completed": False, "max_streak": 0}})
+            new_data["habits"] = dict(self.data["habits"], **{new_add: {"streak": 0, "completed": False, "max_streak": 0}})
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                 json.dump(new_data, f, ensure_ascii=False, indent=4)
                 f.close()
-            print(f"{add} has been {bcolors.OKGREEN}added{bcolors.ENDC}.")
+            print(f"{new_add} has been {bcolors.OKGREEN}added{bcolors.ENDC}.")
 
     def finish(self):
         self.get_data()
