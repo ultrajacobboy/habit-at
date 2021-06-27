@@ -40,22 +40,21 @@ class Habit:
         self.path = path
         self.clear = clear
         self.data = None
+        self.sep = "----------------------------------------------"
 
     def get_data(self):
         with open(f'{script}{path}data.json', "r") as f:
-            data = json.load(f)
+            self.data = json.load(f)
             f.close()
-        self.data = data
 
     def check_name(self):
         self.get_data()
         if self.data["name"] is None:
-            new_name = input("What is your name?\n>")
-            self.data["name"] = new_name
+            self.name = input("What is your name?\n>")
+            self.data["name"] = self.name
             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                 json.dump(self.data, f, ensure_ascii=False, indent=4)
                 f.close()
-                self.name = new_name
                 os.system(self.clear)
         else:
             pass
@@ -67,7 +66,8 @@ class Habit:
         date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         self.check_name()
         self.get_data()
-        print(f"Welcome to {bcolors.OKCYAN}habit-at{bcolors.ENDC}.\n")
+        self.name = self.data["name"]
+        print(f"Welcome to {bcolors.OKCYAN}habit-at{bcolors.ENDC}, {bcolors.OKCYAN}{self.name}{bcolors.ENDC}.\n")
         print(f"It is currently {bcolors.OKCYAN}{date_time}{bcolors.ENDC}")
         hab_num = 0
         for i in self.data["habits"]:
@@ -139,7 +139,6 @@ class Habit:
 
     def finish(self):
         os.system(self.clear)
-        self.sep = "----------------------------------------------"
         self.get_data()
         lists = []
         for key, value in self.data["habits"].items():
@@ -175,7 +174,6 @@ class Habit:
 
     def del_habit(self):
         self.get_data()
-        self.sep = "----------------------------------------------"
         os.system(self.clear)
         lists = []
         for key, value in self.data["habits"].items():
@@ -202,7 +200,6 @@ class Habit:
 
     def list_all(self):
         os.system(self.clear)
-        self.sep = "----------------------------------------------"
         self.get_data()
         lists = []
         m = 0
@@ -216,7 +213,7 @@ class Habit:
             m += 1
         print(f"You have {m} habits")
         print(self.sep)
-        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to exit.{bcolors.ENDC}")
         while True:
             if keyboard.is_pressed("esc"):
                 os.system(self.clear)
@@ -228,7 +225,7 @@ class Habit:
         with open(f'{self.script}{self.path}LICENSE', "r") as f:
             print(f.read())
             f.close()
-        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to exit.{bcolors.ENDC}")
         while True:
             if keyboard.is_pressed("esc"):
                 os.system(self.clear)
@@ -242,25 +239,38 @@ class Habit:
         print(f"Version: {platform.version()}")
         print(f"Architecture: {platform.machine()}")
         print(f"Processor: {platform.processor()}")
-        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to quit.{bcolors.ENDC}")
+        print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to exit.{bcolors.ENDC}")
         while True:
             if keyboard.is_pressed("esc"):
                 os.system(self.clear)
                 self.welcome()
                 break
-        
+
+    def stopwatch(self):
+        os.system(self.clear)
+        start_time = datetime.now()
+        while True:
+            if keyboard.is_pressed("esc"):
+                os.system(self.clear)
+                self.welcome()
+                break
+            else:
+                time_rn = datetime.now()
+                print(time_rn - start_time)
+                print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to exit.{bcolors.ENDC}")
+                os.system(self.clear)
 
     def user_input(self):
         while True:
-            user = input(f"{self.name}> ")
-            user = user.strip()
+            user = input(f"{self.name}> ").strip()
+            #user = user.strip()
             if user == "help" or user == "man" or user == "?" or user == "??" or user == "???":
                 print("Documentation is at https://github.com/ultrajacobboy/habit-at")
             elif user == "add":
                 self.add_habit()
             elif user == "finish":
                 self.finish()
-            elif user == "quit" or user == "exit":
+            elif user == "quit" or user == "exit" or user == "bye":
                 goodbye = ["Goodbye", "See you soon!", "Have a good day!", "See you later!"]
                 curr = datetime.now().strftime("%m/%d/%Y")
                 self.data["timestamp"] = curr
@@ -280,5 +290,9 @@ class Habit:
                 self.list_all()
             elif user == "system":
                 self.system()
+            elif user == "stopwatch":
+                self.stopwatch()
             else:
-                print("Unknown command.")
+                os.system(self.clear)
+                self.welcome()
+                print(f"{bcolors.FAIL}Unknown command.{bcolors.ENDC}")

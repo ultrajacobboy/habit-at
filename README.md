@@ -1,7 +1,7 @@
 # Habit-at
 
 Habit-at is a small app that can help track your habits by making streaks  
-Habit-at also is 100% open source (duh) and requires no internet connection!
+Habit-at also is 100% open source (duh) and requires no internet connection or external modules!
 
 
 ## Installation
@@ -14,7 +14,8 @@ git clone https://github.com/ultrajacobboy/habit-at/tree/main
 
 ## Usage
 `add`: Adds a habit for you to track  
-`finish`: Finishes a habit and adds score to your streaks  
+`finish`: Finishes a habit and adds score to your streaks 
+`stopwatch`: Start a stopwatch   
 `delete`: Delete a habit  
 `list`: Lists all your habits, and the stats for each one  
 `license`: Shows the license  
