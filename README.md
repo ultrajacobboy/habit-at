@@ -24,9 +24,9 @@ git clone https://github.com/ultrajacobboy/habit-at/tree/main
 `system`: System info
 
 ### Webserver
-`pip3 install flask`
-Run the webserver/main.py
-Have fun
+`pip3 install flask`  
+Run the webserver/main.py  
+The website is at 127.0.0.1:4321  
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

@@ -1,16 +1,5 @@
 {
-    "name": "jacob",
-    "habits": {
-        "joe": {
-            "streak": 2,
-            "completed": true,
-            "max_streak": 10
-        },
-        "joes": {
-            "streak": 1,
-            "completed": false,
-            "max_streak": 1
-        }
-    },
-    "timestamp": "06/27/2021"
+    "name": null,
+    "habits": {},
+    "timestamp": null
 }
