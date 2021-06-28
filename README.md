@@ -22,7 +22,7 @@ Running regular, habit-at will run a "time check" to check if the day is changed
 Running lightweight, habit-at will run a "time check" alongside any other command being run.  
 
 #### So who should use lightweight?  
-Anyone with less than 2 cores or if you prefer less read and write to files. To check you amount of cores, run corecheck.py  
+Anyone with less than 2 cores or if you prefer less read and write to files. To check your amount of cores, run corecheck.py  
 
 ### CLI Commands
 `add`: Adds a habit for you to track  
