@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from os.path import abspath, dirname
 import platform
 import sys
@@ -21,7 +21,7 @@ if user_os == "Windows":
     path = "\\"
 else:
     path = "/"
-app = Flask(__name__, template_folder=f"{pathed}{path}templates")
+app = Flask(__name__, template_folder=f"{pathed}{path}templates", static_folder=f"{pathed}{path}styles")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -30,7 +30,28 @@ def home():
         f.close()
     client.get_data()
     client.is_it_ended()
+    if the_dict["name"] is None:
+        return redirect("/name")
+    client.get_data()
+    client.is_it_ended()
     return render_template("index.html", dict_item=the_dict["habits"])
+
+@app.route("/name", methods=["GET", "POST"])
+def name():
+    client.get_data()
+    client.is_it_ended()
+    return render_template("name.html")
+
+@app.route("/name-data", methods=["POST"])
+def name_data():
+    text = request.form["text-finish"]
+    with open(f"{path2}{path}data.json") as f:
+        the_dict = json.load(f)
+        f.close()
+    the_dict["name"] = text
+    with open(f"{path2}{path}data.json", "w", encoding="utf-8") as f:
+        json.dump(the_dict, f, ensure_ascii=False, indent=4)
+        return render_template("success.html")
 
 @app.route("/finish", methods=["GET", "POST"])
 def finish():
