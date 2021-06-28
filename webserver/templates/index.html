@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Habit-at hub</title>
+</head>
+<body>
+    <h1>Habit-at hub</h1>
+    <form method="post" action="/finish">
+        <input type="submit" value="Finish habit" name="finish"/>
+    </form>
+    <form method="post" action="/add">
+        <input type="submit" value="Add habit" name="add" />
+    </form>
+    <form method="post" action="/delete">
+        <input type="submit" value="Delete habit" name="delete" />
+    </form>
+    <h3>Habits</h3>
+    {% for key, value in dict_item.items() %}
+        <p>{{key}} - Completed: {{value["completed"]}} - Streak: {{value["streak"]}} - Max: {{value["max_streak"]}}</p>
+    {% endfor %}
+    <a href="about">About page</a>
+</body>
+
+      

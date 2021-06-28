@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add</title>
+</head>
+<body>
+    <h1>What is the name of the habit you would like to add?</h1>
+    <form action="/data" method = "POST">
+        <p>Name <input type = "text" name = "text" /></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+    <h3>Habits</h3>
+    {% for key, value in dict_item.items() %}
+        <p>{{key}} - Completed: {{value["completed"]}} - Streak: {{value["streak"]}} - Max: {{value["max_streak"]}}</p>
+    {% endfor %}
+</body>

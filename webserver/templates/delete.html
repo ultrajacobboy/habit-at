@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delete</title>
+</head>
+<body>
+    <h1>Which habit would you like to delete?</h1>
+    <form action="/delete-data" method="POST">
+        <p>Name <input type = "text" name="text-finish"/></p>
+        <p><input type = "submit" value = "Submit" /></p>
+    </form>
+    <h3>Habits</h3>
+    {% for key, value in dict_item.items() %}
+        <p>{{key}} - Completed: {{value["completed"]}} - Streak: {{value["streak"]}} - Max: {{value["max_streak"]}}</p>
+    {% endfor %}
+</body>

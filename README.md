@@ -1,7 +1,7 @@
 # Habit-at
 
 Habit-at is a small app that can help track your habits by making streaks  
-Habit-at also is 100% open source (duh) and requires no internet connection or external modules!
+Habit-at also is 100% open source (duh) and requires no internet connection or external modules for the CLI version (the webserver does require flask `pip3 install flask`)!
 
 
 ## Installation
@@ -13,6 +13,8 @@ git clone https://github.com/ultrajacobboy/habit-at/tree/main
 ```
 
 ## Usage
+
+### CLI
 `add`: Adds a habit for you to track  
 `finish`: Finishes a habit and adds score to your streaks  
 `stopwatch`: Start a stopwatch   
@@ -20,6 +22,11 @@ git clone https://github.com/ultrajacobboy/habit-at/tree/main
 `list`: Lists all your habits, and the stats for each one  
 `license`: Shows the license  
 `system`: System info
+
+### Webserver
+`pip3 install flask`
+Run the webserver/main.py
+Have fun
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
