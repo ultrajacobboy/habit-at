@@ -262,7 +262,7 @@ class Habit:
 
     def user_input(self):
         while True:
-            user = input(f"{self.name}> ").strip()
+            user = input(f"{self.name}> ").strip().lower()
             #user = user.strip()
             if user == "help" or user == "man" or user == "?" or user == "??" or user == "???":
                 print("Documentation is at https://github.com/ultrajacobboy/habit-at")
