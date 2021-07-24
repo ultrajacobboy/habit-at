@@ -1,5 +1,9 @@
 {
+    "license": false,
     "name": null,
-    "habits": {},
-    "timestamp": "06/28/2021"
+    "habits": {
+    },
+    "timestamp": "07/23/2021",
+    "remind": "19",
+    "remind_today": false
 }

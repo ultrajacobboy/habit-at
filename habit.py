@@ -8,6 +8,8 @@ import sys
 import keyboard
 import threading
 import random
+from pushover import init, Client
+import config
 
 script = dirname(abspath(__file__))
 
@@ -65,40 +67,66 @@ class Habit:
         os.system("title " + "Habit-at")
         date_time = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
         self.check_name()
-        self.get_data()
-        self.name = self.data["name"]
-        print(f"Welcome to {bcolors.OKCYAN}habit-at{bcolors.ENDC}, {bcolors.OKCYAN}{self.name}{bcolors.ENDC}.\n")
-        print(f"It is currently {bcolors.OKCYAN}{date_time}{bcolors.ENDC}")
-        hab_num = 0
-        for i in self.data["habits"]:
-            hab_num += 1
-        if hab_num == 0:
-            print(f"You are currently tracking {bcolors.FAIL}{hab_num}{bcolors.ENDC} habits.\n")
-        elif hab_num == 1:
-            print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habit.\n")
+        if self.data["license"] is False:
+            print("Please open the data.json file and agree to the licence!")
+            sys.exit()
         else:
-            print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habits.\n")
-        print("* Github: https://github.com/ultrajacobboy/habit-at")
-        checking = threading.Thread(target=self.is_it_end)
-        checking.daemon = True
-        checking.start()
+            self.get_data()
+            self.name = self.data["name"]
+            print(f"Welcome to {bcolors.OKCYAN}habit-at{bcolors.ENDC}, {bcolors.OKCYAN}{self.name}{bcolors.ENDC}.\n")
+            print(f"It is currently {bcolors.OKCYAN}{date_time}{bcolors.ENDC}")
+            hab_num = 0
+            for i in self.data["habits"]:
+                hab_num += 1
+            if hab_num == 0:
+                print(f"You are currently tracking {bcolors.FAIL}{hab_num}{bcolors.ENDC} habits.\n")
+            elif hab_num == 1:
+                print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habit.\n")
+            else:
+                print(f"You are currently tracking {bcolors.OKGREEN}{hab_num}{bcolors.ENDC} habits.\n")
+            print("* Github: https://github.com/ultrajacobboy/habit-at")
+            checking = threading.Thread(target=self.is_it_end)
+            checking.daemon = True
+            checking.start()
         
     def is_it_end(self):
-        curr = datetime.now().strftime("%m/%d/%Y")
-        self.get_data()
-        if self.data["timestamp"] != curr:
-            for key, value in self.data["habits"].items():
-                if value["completed"]:
-                    value["completed"] = False
-                else:
-                    value["streak"] = 0
-            self.data["timestamp"] = curr
-            with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
-                json.dump(self.data, f, ensure_ascii=False, indent=4)
-                f.close()
-        else:
-            pass
-        time.sleep(25)
+        if config.PUSHOVER_USER is not None:
+            client = Client(config.PUSHOVER_USER, api_token=config.PUSOVER_KEY)
+        while True:
+            curr = datetime.now().strftime("%m/%d/%Y")
+            self.get_data()
+            if self.data["timestamp"] != curr:
+                for key, value in self.data["habits"].items():
+                    if value["completed"]:
+                        value["completed"] = False
+                    else:
+                        value["streak"] = 0
+                self.data["timestamp"] = curr
+                self.data["remind_today"] = False
+                with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
+                    json.dump(self.data, f, ensure_ascii=False, indent=4)
+                    f.close()
+            else:
+                pass
+
+            if config.PUSHOVER_USER is not None:
+                curr = datetime.now().strftime("%H")
+                if curr == self.data["remind"]:
+                    habit_list = []
+                    for key, value in self.data["habits"].items():
+                        if not value["completed"]:
+                            habit_list.append(key)
+                        empty = ""
+                        for item in habit_list:
+                            empty += f" {item}"
+                    if habit_list == []:
+                        pass
+                    else:
+                        client.send_message(f"You still have to do {empty}!", title="Habit reminder")
+                        self.data["remind_today"] = True
+                        with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
+                            json.dump(self.data, f, ensure_ascii=False, indent=4)
+            time.sleep(25)
 
     def is_it_ended(self):
         curr = datetime.now().strftime("%m/%d/%Y")
@@ -260,6 +288,23 @@ class Habit:
                 print(f"\n{bcolors.HEADER}{bcolors.BOLD}Press to ESC to exit.{bcolors.ENDC}")
                 os.system(self.clear)
 
+    def set_remind(self):
+        self.get_data()
+        try:
+            inp = int(input("Set reminder time by 24 hour\nFor example 16 for 4 o' clock\n> "))
+        except:
+            print("Invalid time.")
+        if inp <= 24 and inp >= 0:
+            if inp < 10:
+                hour = "0" + hour[-1]
+            with open(f'{script}{path}data.json', "w", encoding="utf-8") as asdf:
+                self.data["remind"] = str(inp)
+                json.dump(self.data, asdf)
+                asdf.close()
+                print("Success!")
+        else:
+            print("Invalid time.")
+
     def user_input(self):
         while True:
             user = input(f"{self.name}> ").strip().lower()
@@ -292,6 +337,8 @@ class Habit:
                 self.system()
             elif user == "stopwatch":
                 self.stopwatch()
+            elif user == "remind":
+                self.set_remind()
             else:
                 os.system(self.clear)
                 self.welcome()
