@@ -96,13 +96,13 @@ class Habit:
             curr = datetime.now().strftime("%m/%d/%Y")
             self.get_data()
             if self.data["timestamp"] != curr:
+                self.data["remind_today"] = False
                 for key, value in self.data["habits"].items():
                     if value["completed"]:
                         value["completed"] = False
                     else:
                         value["streak"] = 0
                 self.data["timestamp"] = curr
-                self.data["remind_today"] = False
                 with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                     json.dump(self.data, f, ensure_ascii=False, indent=4)
                     f.close()
@@ -110,22 +110,23 @@ class Habit:
                 pass
 
             if config.PUSHOVER_USER is not None:
-                curr = datetime.now().strftime("%H")
-                if curr == self.data["remind"]:
-                    habit_list = []
-                    for key, value in self.data["habits"].items():
-                        if not value["completed"]:
-                            habit_list.append(key)
-                        empty = ""
-                        for item in habit_list:
-                            empty += f" {item}"
-                    if habit_list == []:
-                        pass
-                    else:
-                        client.send_message(f"You still have to do {empty}!", title="Habit reminder")
-                        self.data["remind_today"] = True
-                        with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
-                            json.dump(self.data, f, ensure_ascii=False, indent=4)
+                if self.data["remind_today"] is False:
+                    curr = datetime.now().strftime("%H")
+                    if curr == self.data["remind"]:
+                        habit_list = []
+                        for key, value in self.data["habits"].items():
+                            if not value["completed"]:
+                                habit_list.append(key)
+                            empty = ""
+                            for item in habit_list:
+                                empty += f" {item}"
+                        if habit_list == []:
+                            pass
+                        else:
+                            client.send_message(f"You still have to do {empty}!", title="Habit reminder")
+                            self.data["remind_today"] = True
+                            with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
+                                json.dump(self.data, f, ensure_ascii=False, indent=4)
             time.sleep(25)
 
     def is_it_ended(self):
