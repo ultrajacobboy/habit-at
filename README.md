@@ -22,9 +22,10 @@ git clone https://github.com/ultrajacobboy/habit-at/tree/main
 `stopwatch`: Start a stopwatch   
 `delete`: Delete a habit  
 `list`: Lists all your habits, and the stats for each one  
-`license`: Shows the license
+`license`: Shows the license  
 `system`: System info  
 `remind`: Set time for pushover reminder (you need pushover)  
+`challenge`: Toggle challenges
 
 ### Webserver
 `pip3 install flask`  

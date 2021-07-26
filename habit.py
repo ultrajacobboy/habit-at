@@ -127,6 +127,19 @@ class Habit:
                             self.data["remind_today"] = True
                             with open(f'{self.script}{self.path}data.json', "w", encoding="utf-8") as f:
                                 json.dump(self.data, f, ensure_ascii=False, indent=4)
+
+            if self.data["challenge"]:
+                if config.PUSHOVER_USER is not None:
+                    send = random.randint(1, 2005)
+                    if send == 1:
+                        challenges = ["Have you tried meditating?", "How about some meditation?", "If you need some calm, try meditation!",
+                        "Cardio can vastly improve your health!", "Have you tried cardio?", "To increase longevity, try cardio!",
+                        "Reading can increase empathy!", "Reading is fun!", "Have you tried reading?",
+                        "Smiling can increase your mood!", "Being grateful is great!"]
+                        client.send_message(random.choice(challenges), title="Challenge!")
+                else:
+                    print(f"{bcolors.FAIL}You have challenge enabled, but have no pushover key set!{bcolors.ENDC}")
+
             time.sleep(25)
 
     def is_it_ended(self):
@@ -300,11 +313,34 @@ class Habit:
                 inp = "0" + inp[-1]
             with open(f'{script}{path}data.json', "w", encoding="utf-8") as asdf:
                 self.data["remind"] = str(inp)
-                json.dump(self.data, asdf)
+                json.dump(self.data, asdf, ensure_ascii=False, indent=4)
                 asdf.close()
                 print("Success!")
+            os.system(self.clear)
+            self.welcome()
         else:
+            os.system(self.clear)
+            self.welcome()
             print("Invalid time.")
+
+    def set_motiv(self):
+        self.get_data()
+        if self.data["challenge"]:
+            os.system(self.clear)
+            self.welcome()
+            print("Disabled challenges.")
+            with open(f'{script}{path}data.json', "w", encoding="utf-8") as asdf:
+                self.data["challenge"] = False
+                json.dump(self.data, asdf, ensure_ascii=False, indent=4)
+                asdf.close()
+        else:
+            os.system(self.clear)
+            self.welcome()
+            print("Enabled challenges.")
+            with open(f'{script}{path}data.json', "w", encoding="utf-8") as asdf:
+                self.data["challenge"] = True
+                json.dump(self.data, asdf, ensure_ascii=False, indent=4)
+                asdf.close()
 
     def user_input(self):
         while True:
@@ -340,6 +376,8 @@ class Habit:
                 self.stopwatch()
             elif user == "remind":
                 self.set_remind()
+            elif user == "challenge":
+                self.set_motiv()
             else:
                 os.system(self.clear)
                 self.welcome()
