@@ -297,7 +297,7 @@ class Habit:
             print("Invalid time.")
         if inp <= 24 and inp >= 0:
             if inp < 10:
-                hour = "0" + hour[-1]
+                inp = "0" + inp[-1]
             with open(f'{script}{path}data.json', "w", encoding="utf-8") as asdf:
                 self.data["remind"] = str(inp)
                 json.dump(self.data, asdf)
